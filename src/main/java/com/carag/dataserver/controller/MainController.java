@@ -1,23 +1,35 @@
 package com.carag.dataserver.controller;
 
-import com.carag.dataserver.api.ImageFetcher;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.carag.dataserver.config.CredentialStore;
+import com.carag.dataserver.connectors.AlarmConnector;
+import com.carag.dataserver.model.Camera;
+import com.carag.dataserver.model.Image;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
 @Controller
 public class MainController {
 
+    @Inject
+    private CredentialStore store;
+    private Camera c;
 
-    @Autowired
-    ImageFetcher im;
+    @PostConstruct
+    public void buildCameraList(){
 
-    public void run(){
+        AlarmConnector alarm = new AlarmConnector(store);
+        this.c = new Camera(alarm, "2048");
+        c.update();
 
-       // this.im.getImage("2048");
+        c.getNextFrame();
+        c.getNextFrame();
+        System.out.println();
 
     }
 
@@ -27,8 +39,7 @@ public class MainController {
         return ResponseEntity
                 .ok()
                 .contentType(MediaType.IMAGE_JPEG)
-                .body(im.getImage("2048"));
-
+                .body(c.getNextFrame().getData());
     }
 
 }
