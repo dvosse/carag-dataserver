@@ -1,5 +1,6 @@
 package com.carag.dataserver.controller;
 
+import com.carag.dataserver.config.AllowedTypes;
 import com.carag.dataserver.config.CredentialStore;
 import com.carag.dataserver.connectors.AlarmConnector;
 import com.carag.dataserver.model.Camera;
@@ -18,28 +19,29 @@ public class MainController {
 
     @Inject
     private CredentialStore store;
-    private Camera c;
+
 
     @PostConstruct
-    public void buildCameraList(){
+    public void buildCameraList() throws Exception{
 
-        AlarmConnector alarm = new AlarmConnector(store);
-        this.c = new Camera(alarm, "2048");
+        Camera c = new Camera(AllowedTypes.Alarm, this.store);
+
         c.update();
-
-        c.getNextFrame();
-        c.getNextFrame();
-        System.out.println();
 
     }
 
     @RequestMapping(value = {"/test"}, method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
-    public Object testGet(){
+    public Object testGet() throws Exception{
+
+
+
+
+     //   byte [] x = c.getNextFrame().getData();
 
         return ResponseEntity
                 .ok()
                 .contentType(MediaType.IMAGE_JPEG)
-                .body(c.getNextFrame().getData());
+                .body("");
     }
 
 }

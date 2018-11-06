@@ -1,5 +1,8 @@
 package com.carag.dataserver.model;
 
+import com.carag.dataserver.config.AllowedTypes;
+import com.carag.dataserver.config.CredentialStore;
+import com.carag.dataserver.connectors.AlarmConnector;
 import com.carag.dataserver.connectors.WebConnector;
 
 import java.util.LinkedList;
@@ -12,23 +15,30 @@ public class Camera {
 
     private String name;
     private String target;
-    private String type;
+    private AllowedTypes type;
     private int sleepTime;
     private int id;
 
-    public Camera(WebConnector connector, String name, String target, String type, int sleepTime, int id) {
-        this.connector = connector;
-        this.name = name;
-        this.target = target;
-        this.type = type;
-        this.sleepTime = sleepTime;
-        this.id = id;
+    public Camera(AllowedTypes type, CredentialStore store) throws Exception{
+
+
+
+        this.connector = setConnector(type, store);
+
+
+
+        System.out.println();
+
     }
 
-    public Camera(WebConnector connector, String target){
-        this.target = "2048";
-        this.connector = connector;
+
+    private WebConnector setConnector(AllowedTypes type, CredentialStore store){
+        switch (type){
+            case Alarm: return new AlarmConnector(store);
+            default: throw new IllegalArgumentException("Connectore type " + type.toString() + " is not valid..." );
+        }
     }
+
 
     public Image getNextFrame(){
         return imageList.get(0);
@@ -36,7 +46,7 @@ public class Camera {
 
     public void update(){
 
-        Image i = new Image(connector.getImage());
+        Image i = new Image(connector.getImage(target));
         imageList.add(i);
 
         if (imageList.size() > 10) {
@@ -45,19 +55,8 @@ public class Camera {
 
     }
 
-    public Camera(WebConnector connector, int id) {
-        this.connector = connector;
-        this.id = id;
-    }
-
-    public Camera(){}
-
     public List<Image> getImageList() {
         return imageList;
-    }
-
-    public void setImageList(List<Image> imageList) {
-        this.imageList = imageList;
     }
 
     public WebConnector getConnector() {
@@ -82,14 +81,6 @@ public class Camera {
 
     public void setTarget(String target) {
         this.target = target;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public int getSleepTime() {

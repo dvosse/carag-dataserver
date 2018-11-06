@@ -4,7 +4,7 @@ public interface WebConnector {
 
 
 
-    byte [] getImage();
+    byte [] getImage(String target);
     void authenticate();
 
 

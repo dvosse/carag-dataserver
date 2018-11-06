@@ -14,27 +14,23 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-
 public class AlarmConnector implements  WebConnector{
 
     private CredentialStore store;
     private HttpHeaders authHeaders;
-    private String target;
 
     public AlarmConnector(CredentialStore store) {
         this.store = store;
+        authenticate();
     }
 
-    public byte[] getImage(){
-        authenticate();
+    public byte[] getImage(String target){
 
         String url = "https://www.alarm.com/web/Video/GetImage.aspx?res=0&qual=10&deviceID="+target;
-
         HttpEntity<String> request = new HttpEntity<>(this.authHeaders);
         HttpEntity<byte[]> response = new RestTemplate().exchange(url, HttpMethod.GET,request,byte[].class);
 
         return response.getBody();
-
     }
 
     public void authenticate(){
@@ -66,14 +62,6 @@ public class AlarmConnector implements  WebConnector{
 
         headers.add("Cookie", cookies.toString());
         this.authHeaders = headers;
-    }
-
-    public String getTarget() {
-        return target;
-    }
-
-    public void setTarget(String target) {
-        this.target = target;
     }
 
     public CredentialStore getStore() {
