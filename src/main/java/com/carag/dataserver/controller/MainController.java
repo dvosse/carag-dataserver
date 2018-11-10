@@ -1,10 +1,10 @@
 package com.carag.dataserver.controller;
 
 import com.carag.dataserver.config.AllowedTypes;
+import com.carag.dataserver.config.ApplicationContextProvider;
 import com.carag.dataserver.config.CredentialStore;
-import com.carag.dataserver.connectors.AlarmConnector;
 import com.carag.dataserver.model.Camera;
-import com.carag.dataserver.model.Image;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -20,13 +20,31 @@ public class MainController {
     @Inject
     private CredentialStore store;
 
+    @Inject
+    private ApplicationContextProvider provider;
+
 
     @PostConstruct
     public void buildCameraList() throws Exception{
 
-        Camera c = new Camera(AllowedTypes.Alarm, this.store);
+        ApplicationContext ac = provider.getContext();
 
-        c.update();
+        Camera c = (Camera) ac.getBean(Camera.class);
+        Camera c2 = (Camera) ac.getBean(Camera.class);
+
+        store.setLloydUser("gggggg");
+
+        c2.setName("Hello");
+
+
+        System.out.println();
+
+
+
+
+      // Camera c = new Camera(AllowedTypes.Alarm, this.store);
+
+
 
     }
 

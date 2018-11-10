@@ -4,10 +4,19 @@ import com.carag.dataserver.config.AllowedTypes;
 import com.carag.dataserver.config.CredentialStore;
 import com.carag.dataserver.connectors.AlarmConnector;
 import com.carag.dataserver.connectors.WebConnector;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
 
 import java.util.LinkedList;
 import java.util.List;
 
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class Camera {
 
     private List<Image> imageList = new LinkedList<>();
@@ -19,11 +28,15 @@ public class Camera {
     private int sleepTime;
     private int id;
 
-    public Camera(AllowedTypes type, CredentialStore store) throws Exception{
+
+    @Inject
+    CredentialStore cs;
+
+    public Camera(){
 
 
 
-        this.connector = setConnector(type, store);
+      //  this.connector = setConnector(type, store);
 
 
 
